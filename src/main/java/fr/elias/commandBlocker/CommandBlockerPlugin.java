@@ -8,12 +8,14 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -22,19 +24,28 @@ import java.util.stream.Collectors;
 public class CommandBlockerPlugin extends JavaPlugin implements Listener {
 
     private FileConfiguration config;
+    private FileConfiguration messagesConfig;
 
     @Override
     public void onEnable() {
         saveDefaultConfig();
         config = getConfig();
-        getLogger().info("Configuration loaded. Regions: " + Objects.requireNonNull(config.getConfigurationSection("regions")).getKeys(false));
+
+        // Load the messages file
+        File messagesFile = new File(getDataFolder(), "messages.yml");
+        if (!messagesFile.exists()) {
+            saveResource("messages.yml", false);
+        }
+        messagesConfig = YamlConfiguration.loadConfiguration(messagesFile);
+
+        getLogger().info(formatMessage("configuration_loaded", Objects.requireNonNull(config.getConfigurationSection("regions")).getKeys(false).toString()));
         Bukkit.getPluginManager().registerEvents(this, this);
-        getLogger().info("CommandBlockerPlugin has been enabled.");
+        getLogger().info(formatMessage("plugin_enabled"));
     }
 
     @Override
     public void onDisable() {
-        getLogger().info("CommandBlockerPlugin has been disabled.");
+        getLogger().info(formatMessage("plugin_disabled"));
     }
 
     @EventHandler
@@ -65,7 +76,7 @@ public class CommandBlockerPlugin extends JavaPlugin implements Listener {
                     // Check if the command or its plugin-specific variants are blocked
                     if (isCommandBlocked(command, pluginCommand, blockedCommands)) {
                         event.setCancelled(true);
-                        player.sendMessage(ChatColor.RED + "You cannot use this command in this area.");
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', getMessage("command_blocked")));
                         getLogger().info("Command blocked: " + event.getMessage());
                         return;
                     } else {
@@ -94,8 +105,16 @@ public class CommandBlockerPlugin extends JavaPlugin implements Listener {
                     return true;
                 }
             }
-
         }
         return false;
+    }
+
+    private String getMessage(String key) {
+        return messagesConfig.getString(key, key);
+    }
+
+    private String formatMessage(String key, Object... args) {
+        String message = getMessage(key);
+        return ChatColor.translateAlternateColorCodes('&', String.format(message, args));
     }
 }

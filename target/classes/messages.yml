@@ -1,0 +1,14 @@
+# Message displayed when a command is blocked
+command_blocked: "&cYou cannot use this command in this area."
+
+# Message displayed when a command is allowed (not blocked)
+command_allowed: "&aCommand allowed."
+
+# Message displayed when the plugin is enabled
+plugin_enabled: "&aCommandBlockerPlugin has been enabled."
+
+# Message displayed when the plugin is disabled
+plugin_disabled: "&cCommandBlockerPlugin has been disabled."
+
+# Message displayed when the configuration is loaded
+configuration_loaded: "&eConfiguration loaded. Regions: {regions}"
