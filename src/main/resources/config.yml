@@ -1,0 +1,7 @@
+regions:
+  spawn:
+    - cmi*                  # Blocks all CMI commands
+  vip_zone:
+    - cmi warp              # Blocks only the /cmi warp command
+    - cmi tp                # Blocks only the /cmi tp command
+    - essentials*           # Blocks all Essentials commands

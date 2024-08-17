@@ -1,0 +1,5 @@
+name: CommandBlockerPlugin
+version: 1.0
+main: fr.elias.commandBlocker.CommandBlockerPlugin
+api-version: '1.21'
+description: A plugin that blocks specific commands in WorldGuard regions.
